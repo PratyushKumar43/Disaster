@@ -24,11 +24,23 @@ import {
   Building,
   Save,
   XCircle,
-  Trash2
+  Trash2,
+  Cloud
 } from "lucide-react";
 import { inventoryAPI, departmentAPI } from "../../lib/api";
 import type { InventoryItem, Department, User as UserType } from "../../lib/api";
 import { useSocket } from "../../lib/socket";
+import dynamic from 'next/dynamic';
+
+// Dynamic import for modern weather dashboard with code splitting
+const ModernWeatherDashboard = dynamic(() => import('../components/ModernWeatherDashboard'), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+    </div>
+  )
+});
 
 // Theme context
 const useTheme = () => {
@@ -45,8 +57,6 @@ const useTheme = () => {
       const shouldBeDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
       
       setIsDark(shouldBeDark);
-      // Apply theme immediately to prevent flash
-      document.documentElement.classList.toggle('dark', shouldBeDark);
     }
   }, []);
 
@@ -70,6 +80,7 @@ function Sidebar({ activeTab, setActiveTab, isMobileOpen, setIsMobileOpen, isDar
 }) {
   const sidebarItems = [
     { id: 'inventory', label: 'Inventory', icon: Package },
+    { id: 'weather', label: 'Weather Dashboard', icon: Cloud },
     { id: 'ai-analysis', label: 'AI Analysis', icon: Brain },
   ];
 
@@ -169,11 +180,12 @@ function Sidebar({ activeTab, setActiveTab, isMobileOpen, setIsMobileOpen, isDar
 }
 
 // Header Component
-function Header({ isDark, setIsDark, setIsMobileOpen, isConnected }: {
+function Header({ isDark, setIsDark, setIsMobileOpen, isConnected, activeTab }: {
   isDark: boolean;
   setIsDark: (dark: boolean) => void;
   setIsMobileOpen: (open: boolean) => void;
   isConnected?: () => boolean;
+  activeTab: string;
 }) {
   return (
     <header className={`
@@ -205,22 +217,24 @@ function Header({ isDark, setIsDark, setIsMobileOpen, isConnected }: {
             </div>
           )}
 
-          {/* Search */}
-          <div className="hidden md:flex relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search inventory..."
-              className={`
-                pl-10 pr-4 py-2 w-80 rounded-lg border
-                ${isDark
-                  ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:border-green-500'
-                  : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-green-500'
-                }
-                focus:outline-none focus:ring-2 focus:ring-green-500/20
-              `}
-            />
-          </div>
+          {/* Search - Only show on inventory page */}
+          {activeTab === 'inventory' && (
+            <div className="hidden md:flex relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search inventory..."
+                className={`
+                  pl-10 pr-4 py-2 w-80 rounded-lg border
+                  ${isDark
+                    ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:border-green-500'
+                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-green-500'
+                  }
+                  focus:outline-none focus:ring-2 focus:ring-green-500/20
+                `}
+              />
+            </div>
+          )}
 
           {/* Theme Toggle */}
           <motion.button
@@ -2611,6 +2625,7 @@ export default function Dashboard() {
             setIsDark={setIsDark}
             setIsMobileOpen={setIsMobileOpen}
             isConnected={isConnected}
+            activeTab={activeTab}
           />
 
           <main className="flex-1 overflow-y-auto p-6">
@@ -2623,6 +2638,7 @@ export default function Dashboard() {
                 transition={{ duration: 0.2 }}
               >
                 {activeTab === 'inventory' && <InventoryView isDark={isDark} />}
+                {activeTab === 'weather' && <ModernWeatherDashboard isDark={isDark} />}
                 {activeTab === 'ai-analysis' && <AIAnalysisView isDark={isDark} />}
               </motion.div>
             </AnimatePresence>

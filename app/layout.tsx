@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
+import QueryProvider from "./providers/QueryProvider";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -46,7 +47,9 @@ export default function RootLayout({
             `,
           }}
         />
-        {children}
+        <QueryProvider>
+          {children}
+        </QueryProvider>
       </body>
     </html>
   );

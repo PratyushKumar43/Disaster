@@ -21,6 +21,7 @@ const CONSTANTS = require('./src/config/constants');
 const inventoryRoutes = require('./src/routes/inventory');
 const departmentRoutes = require('./src/routes/departments');
 const transactionRoutes = require('./src/routes/transactions');
+const weatherRoutes = require('./src/routes/weather');
 const testRoutes = require('./src/routes/test');
 
 // Import middleware
@@ -195,7 +196,8 @@ app.get('/api', (req, res) => {
     endpoints: {
       inventory: '/api/v1/inventory',
       departments: '/api/v1/departments',
-      transactions: '/api/v1/transactions'
+      transactions: '/api/v1/transactions',
+      weather: '/api/v1/weather'
     }
   });
 });
@@ -204,6 +206,7 @@ app.get('/api', (req, res) => {
 app.use('/api/v1/inventory', inventoryRoutes);
 app.use('/api/v1/departments', departmentRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
+app.use('/api/v1/weather', weatherRoutes);
 app.use('/api/v1/test', testRoutes);
 
 // Error handling middleware (order matters!)

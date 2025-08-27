@@ -15,6 +15,9 @@ out/
 .env.test.local
 .env.production.local
 
+# Database seeding scripts (contains sensitive data)
+backend/seed-departments.js
+
 # IDE
 .vscode/
 .idea/
@@ -49,7 +52,7 @@ pids
 .cache
 .parcel-cache
 
-# Media files (optional - remove if you want to include videos)
+# Media files (large video files)
 *.mp4
 *.avi
 *.mov
@@ -58,3 +61,20 @@ pids
 # Database
 *.sqlite
 *.db
+
+# Build directories
+dist/
+build/
+
+# Coverage reports
+coverage/
+
+# ESLint cache
+.eslintcache
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Temporary files
+.tmp/
+temp/

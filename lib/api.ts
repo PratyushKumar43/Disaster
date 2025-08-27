@@ -20,7 +20,17 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    console.error('API Error:', error.response?.data || error.message);
+    console.error('API Error:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      config: {
+        url: error.config?.url,
+        method: error.config?.method,
+        baseURL: error.config?.baseURL
+      }
+    });
     return Promise.reject(error);
   }
 );
@@ -412,6 +422,237 @@ export const transactionAPI = {
   }
 };
 
+// Weather Types
+interface WeatherLocation {
+  name: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  state?: string;
+  district?: string;
+  country: string;
+}
+
+interface WeatherCurrent {
+  timestamp: string;
+  temperature: number;
+  apparentTemperature?: number;
+  precipitation: number;
+  rain: number;
+  showers: number;
+  snowfall?: number;
+  relativeHumidity?: number;
+  pressure: {
+    msl?: number;
+    surface?: number;
+  };
+  wind: {
+    speed?: number;
+    direction?: number;
+    gusts?: number;
+  };
+  isDay: boolean;
+  weatherCode?: number;
+  cloudCover?: number;
+  uvIndex?: number;
+  visibility?: number;
+  weatherCondition?: string;
+  windDirectionDescription?: string;
+}
+
+interface WeatherForecast {
+  timestamp: string;
+  temperature: number;
+  apparentTemperature?: number;
+  relativeHumidity?: number;
+  precipitationProbability?: number;
+  precipitation?: number;
+  rain?: number;
+  showers?: number;
+  snowfall?: number;
+  pressure?: number;
+  windSpeed?: number;
+  windDirection?: number;
+  windGusts?: number;
+  uvIndex?: number;
+  isDay?: boolean;
+  cloudCover?: number;
+  visibility?: number;
+  weatherCode?: number;
+  dewpoint?: number;
+}
+
+interface DailyForecast {
+  date: string;
+  weatherCode?: number;
+  temperature: {
+    min?: number;
+    max?: number;
+  };
+  apparentTemperature?: {
+    min?: number;
+    max?: number;
+  };
+  precipitation: {
+    total: number;
+    rain?: number;
+    showers?: number;
+    snow?: number;
+    hours?: number;
+    probability?: number;
+  };
+  wind: {
+    speed?: number;
+    gusts?: number;
+    direction?: number;
+  };
+  uvIndex?: number;
+  sunrise?: string;
+  sunset?: string;
+  daylightDuration?: number;
+  sunshineDuration?: number;
+  solarRadiation?: number;
+}
+
+interface WeatherAlert {
+  type: 'heat_wave' | 'cold_wave' | 'heavy_rain' | 'thunderstorm' | 'cyclone' | 'drought' | 'fog' | 'high_wind';
+  severity: 'low' | 'moderate' | 'high' | 'extreme';
+  title: string;
+  description: string;
+  startTime: string;
+  endTime: string;
+  isActive: boolean;
+  location?: WeatherLocation;
+}
+
+interface WeatherData {
+  _id: string;
+  location: WeatherLocation;
+  current: WeatherCurrent;
+  hourlyForecast: WeatherForecast[];
+  dailyForecast: DailyForecast[];
+  alerts: WeatherAlert[];
+  dataSource: {
+    provider: string;
+    lastUpdated: string;
+    generationTime?: number;
+    timezone: string;
+  };
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  dataFreshness?: string;
+  activeAlertsCount?: number;
+}
+
+interface WeatherStats {
+  totalLocations: number;
+  averageTemperature: number;
+  temperatureRange: { min: number; max: number };
+  totalAlerts: number;
+  activeAlerts: number;
+  alertsBySeverity: { low: number; moderate: number; high: number; extreme: number };
+  weatherConditions: Record<string, number>;
+  averageHumidity: number;
+  averageWindSpeed: number;
+  topAffectedAreas: Array<{ area: string; alertCount: number }>;
+  recentUpdates: Array<{
+    location: string;
+    state?: string;
+    lastUpdated: string;
+    temperature: number;
+    condition: string;
+  }>;
+}
+
+// Weather API
+export const weatherAPI = {
+  getCurrent: async (params: {
+    latitude: number;
+    longitude: number;
+    location_name?: string;
+    state?: string;
+    district?: string;
+  }): Promise<ApiResponse<{
+    weather: WeatherData;
+    dataFreshness: string;
+    activeAlerts: WeatherAlert[];
+  }>> => {
+    const response = await api.get('/weather/current', { params });
+    return response.data;
+  },
+
+  getForecast: async (params: {
+    latitude: number;
+    longitude: number;
+    days?: number;
+  }): Promise<ApiResponse<{
+    location: WeatherLocation;
+    current: WeatherCurrent;
+    dailyForecast: DailyForecast[];
+    hourlyForecast: WeatherForecast[];
+    alerts: WeatherAlert[];
+    dataSource: any;
+  }>> => {
+    const response = await api.get('/weather/forecast', { params });
+    return response.data;
+  },
+
+  getAlerts: async (params?: {
+    latitude?: number;
+    longitude?: number;
+    state?: string;
+    severity?: 'low' | 'moderate' | 'high' | 'extreme';
+    active_only?: boolean;
+  }): Promise<ApiResponse<{
+    alerts: WeatherAlert[];
+    count: number;
+    location?: WeatherLocation;
+    filters?: any;
+  }>> => {
+    const response = await api.get('/weather/alerts', { params });
+    return response.data;
+  },
+
+  getStats: async (params?: {
+    state?: string;
+    days?: number;
+  }): Promise<ApiResponse<WeatherStats>> => {
+    const response = await api.get('/weather/stats', { params });
+    return response.data;
+  },
+
+  bulkUpdate: async (locations: Array<{
+    latitude: number;
+    longitude: number;
+    name?: string;
+    state?: string;
+    district?: string;
+  }>): Promise<ApiResponse<{
+    successful: number;
+    failed: number;
+    results: any[];
+    errors: any[];
+  }>> => {
+    const response = await api.post('/weather/bulk-update', { locations });
+    return response.data;
+  },
+
+  cleanup: async (params?: {
+    days_old?: number;
+    dry_run?: boolean;
+  }): Promise<ApiResponse<{
+    recordsModified?: number;
+    recordsToDelete?: number;
+    cutoffDate: string;
+    dryRun: boolean;
+  }>> => {
+    const response = await api.delete('/weather/cleanup', { params });
+    return response.data;
+  }
+};
+
 // Export APIs and types (auth functions removed)
 export {
   api
@@ -422,5 +663,12 @@ export type {
   User,
   Department,
   InventoryItem,
-  Transaction
+  Transaction,
+  WeatherLocation,
+  WeatherCurrent,
+  WeatherForecast,
+  DailyForecast,
+  WeatherAlert,
+  WeatherData,
+  WeatherStats
 };
