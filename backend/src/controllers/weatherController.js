@@ -7,6 +7,54 @@ const { logger } = require('../config/database');
  * Weather Controller - Handles weather-related operations
  */
 
+/**
+ * Helper function to get weather condition description from weather code
+ */
+const getWeatherCondition = (weatherCode) => {
+  const weatherDescriptions = {
+    0: 'Clear sky',
+    1: 'Mainly clear',
+    2: 'Partly cloudy',
+    3: 'Overcast',
+    45: 'Fog',
+    48: 'Depositing rime fog',
+    51: 'Light drizzle',
+    53: 'Moderate drizzle',
+    55: 'Dense drizzle',
+    56: 'Light freezing drizzle',
+    57: 'Dense freezing drizzle',
+    61: 'Slight rain',
+    63: 'Moderate rain',
+    65: 'Heavy rain',
+    66: 'Light freezing rain',
+    67: 'Heavy freezing rain',
+    71: 'Slight snow fall',
+    73: 'Moderate snow fall',
+    75: 'Heavy snow fall',
+    77: 'Snow grains',
+    80: 'Slight rain showers',
+    81: 'Moderate rain showers',
+    82: 'Violent rain showers',
+    85: 'Slight snow showers',
+    86: 'Heavy snow showers',
+    95: 'Thunderstorm',
+    96: 'Thunderstorm with slight hail',
+    99: 'Thunderstorm with heavy hail'
+  };
+  
+  return weatherDescriptions[weatherCode] || 'Unknown';
+};
+
+/**
+ * Helper function to get wind direction description
+ */
+const getWindDirection = (degrees) => {
+  if (degrees === null || degrees === undefined) return 'Unknown';
+  
+  const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  return directions[Math.round(degrees / 22.5) % 16];
+};
+
 // OpenMeteo API configuration
 const OPENMETEO_BASE_URL = 'https://api.open-meteo.com/v1/forecast';
 
@@ -185,38 +233,38 @@ const transformOpenMeteoData = (data, locationInfo) => {
 
   return {
     location: {
-      name: locationInfo.name || `Location ${data.latitude}, ${data.longitude}`,
-      coordinates: {
-        latitude: data.latitude,
-        longitude: data.longitude
-      },
-      state: locationInfo.state,
-      district: locationInfo.district,
-      country: 'India'
+      name: locationInfo?.name || `Location ${data.latitude}, ${data.longitude}`,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      state: locationInfo?.state,
+      district: locationInfo?.district,
+      country: locationInfo?.country || 'India'
     },
     current: {
-      timestamp: new Date(current.time),
-      temperature: current.temperature_2m,
-      apparentTemperature: current.apparent_temperature,
-      precipitation: current.precipitation || 0,
-      rain: current.rain || 0,
-      showers: current.showers || 0,
-      snowfall: current.snowfall || 0,
-      relativeHumidity: current.relative_humidity_2m,
+      timestamp: new Date(current?.time || new Date()),
+      temperature: current?.temperature_2m || 0,
+      apparentTemperature: current?.apparent_temperature || current?.temperature_2m || 0,
+      precipitation: current?.precipitation || 0,
+      rain: current?.rain || 0,
+      showers: current?.showers || 0,
+      snowfall: current?.snowfall || 0,
+      relativeHumidity: current?.relative_humidity_2m || 0,
       pressure: {
-        msl: current.pressure_msl,
-        surface: current.surface_pressure
+        msl: current?.pressure_msl || 0,
+        surface: current?.surface_pressure || 0
       },
       wind: {
-        speed: current.wind_speed_10m,
-        direction: current.wind_direction_10m,
-        gusts: current.wind_gusts_10m
+        speed: current?.wind_speed_10m || 0,
+        direction: current?.wind_direction_10m || 0,
+        gusts: current?.wind_gusts_10m || 0
       },
-      isDay: Boolean(current.is_day),
-      weatherCode: current.weather_code,
-      cloudCover: current.cloud_cover,
-      uvIndex: current.uv_index,
-      visibility: current.visibility
+      isDay: Boolean(current?.is_day),
+      weatherCode: current?.weather_code || 0,
+      weatherCondition: getWeatherCondition(current?.weather_code),
+      windDirectionDescription: getWindDirection(current?.wind_direction_10m),
+      cloudCover: current?.cloud_cover || 0,
+      uvIndex: current?.uv_index || 0,
+      visibility: current?.visibility || 0
     },
     hourlyForecast,
     dailyForecast,
@@ -338,10 +386,10 @@ exports.getCurrentWeather = async (req, res) => {
       district
     });
 
-    // Check if we have existing data for this exact location
+    // Check if we have existing data for this location with reasonable tolerance
     let weather = await Weather.findOne({
-      'location.coordinates.latitude': { $gte: lat - 0.001, $lte: lat + 0.001 },
-      'location.coordinates.longitude': { $gte: lon - 0.001, $lte: lon + 0.001 },
+      'location.coordinates.latitude': { $gte: lat - 0.01, $lte: lat + 0.01 },
+      'location.coordinates.longitude': { $gte: lon - 0.01, $lte: lon + 0.01 },
       isActive: true
     }).sort({ 'dataSource.lastUpdated': -1 });
 
@@ -635,26 +683,26 @@ exports.getWeatherStats = async (req, res) => {
     let maxTemp = Number.MIN_VALUE;
 
     weatherRecords.forEach(weather => {
-      const temp = weather.current.temperature;
-      const humidity = weather.current.relativeHumidity;
-      const windSpeed = weather.current.wind.speed;
+      const temp = weather.current?.temperature;
+      const humidity = weather.current?.relativeHumidity;
+      const windSpeed = weather.current?.wind?.speed;
 
-      if (temp !== null && temp !== undefined) {
+      if (temp !== null && temp !== undefined && !isNaN(temp)) {
         tempSum += temp;
         minTemp = Math.min(minTemp, temp);
         maxTemp = Math.max(maxTemp, temp);
       }
 
-      if (humidity !== null && humidity !== undefined) {
+      if (humidity !== null && humidity !== undefined && !isNaN(humidity)) {
         humiditySum += humidity;
       }
 
-      if (windSpeed !== null && windSpeed !== undefined) {
+      if (windSpeed !== null && windSpeed !== undefined && !isNaN(windSpeed)) {
         windSpeedSum += windSpeed;
       }
 
       // Count weather conditions
-      const condition = weather.current.weatherCondition;
+      const condition = weather.current?.weatherCondition || 'Unknown';
       stats.weatherConditions[condition] = (stats.weatherConditions[condition] || 0) + 1;
 
       // Count alerts
@@ -669,11 +717,11 @@ exports.getWeatherStats = async (req, res) => {
 
       // Track recent updates
       stats.recentUpdates.push({
-        location: weather.location.name,
-        state: weather.location.state,
-        lastUpdated: weather.dataSource.lastUpdated,
-        temperature: weather.current.temperature,
-        condition: weather.current.weatherCondition
+        location: weather.location?.name || 'Unknown',
+        state: weather.location?.state || 'Unknown',
+        lastUpdated: weather.dataSource?.lastUpdated || new Date(),
+        temperature: weather.current?.temperature || 0,
+        condition: weather.current?.weatherCondition || 'Unknown'
       });
     });
 
@@ -689,9 +737,9 @@ exports.getWeatherStats = async (req, res) => {
     // Find top affected areas (areas with most active alerts)
     const areaAlerts = {};
     weatherRecords.forEach(weather => {
-      const area = weather.location.state || weather.location.name;
-      const activeAlerts = weather.alerts.filter(alert => 
-        alert.isActive && new Date(alert.endTime) > new Date()
+      const area = weather.location?.state || weather.location?.name || 'Unknown Area';
+      const activeAlerts = (weather.alerts || []).filter(alert => 
+        alert?.isActive && new Date(alert.endTime) > new Date()
       ).length;
       
       if (activeAlerts > 0) {

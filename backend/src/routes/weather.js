@@ -9,6 +9,9 @@ const {
   cleanupWeatherData
 } = require('../controllers/weatherController');
 
+// Weather report routes
+const weatherReportRoutes = require('./weatherReports');
+
 // Authentication middleware removed for now
 const CONSTANTS = require('../config/constants');
 
@@ -258,6 +261,9 @@ router.delete('/cleanup',
   // authorize(CONSTANTS.USER_ROLES.ADMIN),
   cleanupWeatherData
 );
+
+// Mount weather report routes
+router.use('/reports', weatherReportRoutes);
 
 // Health check for weather service
 router.get('/health', (req, res) => {

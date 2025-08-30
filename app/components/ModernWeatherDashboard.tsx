@@ -48,6 +48,7 @@ import dynamic from 'next/dynamic';
 import { openMeteoAPI, weatherDescriptions, aqiDescriptions } from "../../lib/openMeteoApi";
 import type { WeatherData, AirQualityData } from "../../lib/openMeteoApi";
 import WindyForecastEmbed from "./WindyForecastEmbed";
+import WeatherReportGenerator from "./WeatherReportGenerator";
 
 // Dynamic imports for performance
 const WeatherMap = dynamic(() => import('./WeatherMap'), {
@@ -754,6 +755,9 @@ export default function ModernWeatherDashboard({ isDark }: { isDark: boolean }) 
         <TemperatureChart weather={weather} isDark={isDark} />
         <WeeklyForecast weather={weather} isDark={isDark} />
       </div>
+
+      {/* Weather Report Generator */}
+      <WeatherReportGenerator location={location} isDark={isDark} />
 
       {/* Interactive Map */}
       <motion.div

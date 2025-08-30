@@ -11,18 +11,35 @@ const weatherSchema = new mongoose.Schema({
       trim: true
     },
     coordinates: {
-      latitude: {
-        type: Number,
-        required: true,
-        min: -90,
-        max: 90
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point'
       },
-      longitude: {
-        type: Number,
-        required: true,
-        min: -180,
-        max: 180
+      coordinates: {
+        type: [Number],
+        validate: {
+          validator: function(coords) {
+            return !coords || (coords.length === 2 && 
+                   coords[1] >= -90 && coords[1] <= 90 &&  // latitude
+                   coords[0] >= -180 && coords[0] <= 180);  // longitude
+          },
+          message: 'Coordinates must be [longitude, latitude] within valid ranges'
+        }
       }
+    },
+    // Keep legacy fields for easier access
+    latitude: {
+      type: Number,
+      required: true,
+      min: -90,
+      max: 90
+    },
+    longitude: {
+      type: Number,
+      required: true,
+      min: -180,
+      max: 180
     },
     state: {
       type: String,
@@ -327,20 +344,26 @@ weatherSchema.virtual('activeAlertsCount').get(function() {
 
 // Static method to find weather by location
 weatherSchema.statics.findByLocation = function(latitude, longitude, maxDistance = 50000) {
-  // First try to find exact match or very close match
+  const lat = parseFloat(latitude);
+  const lon = parseFloat(longitude);
+  const tolerance = 0.01; // ~1km tolerance
+  
+  // Try to find weather data near the location with tolerance
   return this.findOne({
     $or: [
+      // Try GeoJSON coordinates with geospatial query
       {
-        'location.coordinates.coordinates': {
+        'location.coordinates': {
           $geoWithin: {
-            $centerSphere: [[longitude, latitude], maxDistance / 6378100] // Earth radius in meters
+            $centerSphere: [[lon, lat], maxDistance / 6378100] // Earth radius in meters
           }
         }
       },
+      // Try legacy latitude/longitude fields
       {
         $and: [
-          { 'location.coordinates.coordinates.0': { $gte: longitude - 0.1, $lte: longitude + 0.1 } },
-          { 'location.coordinates.coordinates.1': { $gte: latitude - 0.1, $lte: latitude + 0.1 } }
+          { 'location.latitude': { $gte: lat - tolerance, $lte: lat + tolerance } },
+          { 'location.longitude': { $gte: lon - tolerance, $lte: lon + tolerance } }
         ]
       }
     ],
@@ -400,17 +423,25 @@ weatherSchema.pre('save', function(next) {
   next();
 });
 
-// Pre-save middleware to set location as Point for 2dsphere index
+// Pre-save middleware to ensure both GeoJSON and legacy coordinate formats
 weatherSchema.pre('save', function(next) {
-  if (this.location && this.location.coordinates && this.location.coordinates.latitude !== undefined && this.location.coordinates.longitude !== undefined) {
-    // Only convert if it's not already in GeoJSON format
-    if (!this.location.coordinates.type) {
-      const lat = this.location.coordinates.latitude;
-      const lon = this.location.coordinates.longitude;
+  if (this.location) {
+    // If we have legacy lat/lon fields, convert to GeoJSON format
+    if (this.location.latitude !== undefined && this.location.longitude !== undefined) {
+      const lat = this.location.latitude;
+      const lon = this.location.longitude;
+      
+      // Set the GeoJSON coordinates
       this.location.coordinates = {
         type: 'Point',
         coordinates: [lon, lat]
       };
+    }
+    // If we have GeoJSON coordinates, extract legacy fields
+    else if (this.location.coordinates && this.location.coordinates.coordinates && Array.isArray(this.location.coordinates.coordinates)) {
+      const [lon, lat] = this.location.coordinates.coordinates;
+      this.location.latitude = lat;
+      this.location.longitude = lon;
     }
   }
   next();

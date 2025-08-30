@@ -281,3 +281,4 @@ export const aqiDescriptions: Record<number, { label: string; color: string }> =
   4: { label: 'Poor', color: '#f97316' },
   5: { label: 'Very Poor', color: '#ef4444' }
 };
+

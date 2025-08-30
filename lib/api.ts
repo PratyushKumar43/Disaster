@@ -650,6 +650,117 @@ export const weatherAPI = {
   }>> => {
     const response = await api.delete('/weather/cleanup', { params });
     return response.data;
+  },
+
+  // Weather report generation
+  generateReport: async (params: {
+    latitude: number;
+    longitude: number;
+    format?: 'json' | 'pdf' | 'excel' | 'html';
+    type?: string;
+    language?: 'en' | 'hi';
+    includeAlerts?: boolean;
+    includeForecast?: boolean;
+    forecastDays?: number;
+  }) => {
+    try {
+      const { format = 'json', ...otherParams } = params;
+      
+      if (format === 'json') {
+        const response = await api.get('/weather/reports/generate', { 
+          params: { ...otherParams, format } 
+        });
+        return response.data;
+      } else {
+        // For non-JSON formats, return the raw response for download
+        const response = await api.get('/weather/reports/generate', { 
+          params: { ...otherParams, format },
+          responseType: 'blob',
+          timeout: 60000 // Extended timeout for file generation
+        });
+        
+        // Check if response is actually a blob
+        if (response.data instanceof Blob) {
+          return response;
+        } else {
+          throw new Error('Invalid response format received');
+        }
+      }
+    } catch (error) {
+      console.error('Error generating weather report:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      throw new Error(`Failed to generate ${params.format || 'json'} report: ${errorMessage}`);
+    }
+  },
+
+  getReportMetadata: async (params: {
+    latitude: number;
+    longitude: number;
+  }): Promise<ApiResponse<{
+    dataAvailable: boolean;
+    lastUpdated: string;
+    dataFreshness: string;
+    location: any;
+    activeAlerts: number;
+    forecastDays: number;
+    supportedFormats: string[];
+    supportedLanguages: string[];
+    recentReports: number;
+  }>> => {
+    const response = await api.get('/weather/reports/metadata', { params });
+    return response.data;
+  },
+
+  // Save weather report to database
+  saveReport: async (reportData: {
+    latitude: number;
+    longitude: number;
+    reportData: any;
+    format?: 'json' | 'pdf' | 'excel' | 'html';
+    title?: string;
+    location_name?: string;
+    state?: string;
+    district?: string;
+    language?: 'en' | 'hi';
+    includeAlerts?: boolean;
+    includeForecast?: boolean;
+    forecastDays?: number;
+  }): Promise<ApiResponse<{
+    reportId: string;
+    title: string;
+    location: any;
+    generatedAt: string;
+    format: string;
+    summary: any;
+  }>> => {
+    const response = await api.post('/weather/reports/save', reportData);
+    return response.data;
+  },
+
+  // Get saved weather reports
+  getSavedReports: async (params?: {
+    page?: number;
+    limit?: number;
+    latitude?: number;
+    longitude?: number;
+    state?: string;
+    format?: string;
+    days?: number;
+  }): Promise<ApiResponse<any[]>> => {
+    const response = await api.get('/weather/reports/saved', { params });
+    return response.data;
+  },
+
+  // Get specific saved weather report
+  getSavedReport: async (id: string): Promise<ApiResponse<any>> => {
+    const response = await api.get(`/weather/reports/saved/${id}`);
+    return response.data;
+  },
+
+  // Delete saved weather report
+  deleteSavedReport: async (id: string): Promise<ApiResponse> => {
+    const response = await api.delete(`/weather/reports/saved/${id}`);
+    return response.data;
   }
 };
 
