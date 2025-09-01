@@ -229,6 +229,24 @@ app.get('/api', (req, res) => {
   });
 });
 
+// API v1 info endpoint - for frontend API base URL
+app.get('/api/v1', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Disaster Management Inventory API v1',
+    version: 'v1',
+    status: 'operational',
+    endpoints: {
+      inventory: '/api/v1/inventory',
+      departments: '/api/v1/departments',
+      transactions: '/api/v1/transactions',
+      weather: '/api/v1/weather',
+      test: '/api/v1/test'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API Routes
 app.use('/api/v1/inventory', inventoryRoutes);
 app.use('/api/v1/departments', departmentRoutes);
