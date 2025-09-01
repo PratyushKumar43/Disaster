@@ -119,10 +119,12 @@ app.use(cors({
     const allowedOrigins = [
       process.env.FRONTEND_URL || 'http://localhost:3000',
       'http://localhost:3000',
-      'http://127.0.0.1:3000'
+      'http://127.0.0.1:3000',
+      'https://disaster-rudkly.vercel.app',
+      'https://*.vercel.app'
     ];
     
-    if (allowedOrigins.includes(origin)) {
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
       callback(null, true);
     } else {
       logger.warn(`CORS blocked request from origin: ${origin}`);
@@ -204,6 +206,11 @@ app.get('/', (req, res) => {
     },
     timestamp: new Date().toISOString()
   });
+});
+
+// Favicon endpoint - browsers automatically request this
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end(); // No content - just prevents 404 errors
 });
 
 // API version info
