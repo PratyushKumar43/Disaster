@@ -9,6 +9,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:weather-reports": "node test-weather-report-routes.js",
+    "verify-deployment": "node verify-deployment.js",
     "lint": "eslint ."
   },
   "keywords": [

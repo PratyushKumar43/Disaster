@@ -9,9 +9,9 @@ interface DashboardOverviewProps {
 
 export function DashboardOverview({ isDark }: DashboardOverviewProps) {
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-4 md:space-y-6 w-full">
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <StatsCard
           title="Total Resources"
           value="1,234"
@@ -46,22 +46,22 @@ export function DashboardOverview({ isDark }: DashboardOverviewProps) {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* Quick Actions */}
-        <div className={`p-6 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm h-fit`}>
+        <div className={`p-4 md:p-6 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm h-fit`}>
           <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Quick Actions
           </h3>
           <div className="grid grid-cols-1 gap-3">
-            <button className="p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-3 text-sm">
+            <button className="p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-3 text-sm w-full">
               <Plus className="h-4 w-4 shrink-0" />
               <span>Add Inventory Item</span>
             </button>
-            <button className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-3 text-sm">
+            <button className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-3 text-sm w-full">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>Create Alert</span>
             </button>
-            <button className="p-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center gap-3 text-sm">
+            <button className="p-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center gap-3 text-sm w-full">
               <BarChart3 className="h-4 w-4 shrink-0" />
               <span>Generate Report</span>
             </button>
@@ -69,7 +69,7 @@ export function DashboardOverview({ isDark }: DashboardOverviewProps) {
         </div>
 
         {/* Recent Activity */}
-        <div className={`p-6 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm h-fit`}>
+        <div className={`p-4 md:p-6 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm h-fit`}>
           <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Recent Activity
           </h3>

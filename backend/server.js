@@ -186,6 +186,26 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Disaster Management Inventory API',
+    version: 'v1',
+    status: 'Server is running',
+    endpoints: {
+      health: '/health',
+      api: '/api',
+      documentation: '/api/docs',
+      inventory: '/api/v1/inventory',
+      departments: '/api/v1/departments',
+      transactions: '/api/v1/transactions',
+      weather: '/api/v1/weather'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API version info
 app.get('/api', (req, res) => {
   res.status(200).json({

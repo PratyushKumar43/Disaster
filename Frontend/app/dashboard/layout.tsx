@@ -107,83 +107,136 @@ export default function DashboardLayout({
 
   return (
     <div className={`flex w-full h-screen overflow-hidden ${isDark ? 'bg-gray-900' : 'bg-gray-50'} transition-colors duration-200`}>
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-30 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-      
-      <AnimatedSidebar open={sidebarOpen} setOpen={setSidebarOpen}>
-        <SidebarBody className="justify-between gap-10 h-full">
-          <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
-            {sidebarOpen ? <DisasterIQLogo /> : <DisasterIQLogoIcon />}
-            <div className="mt-8 flex flex-col gap-2">
-              {sidebarLinks.map((link, idx) => {
-                const IconComponent = link.icon;
-                return (
-                  <SidebarLink 
-                    key={idx} 
-                    link={{
-                      ...link,
-                      icon: (
-                        <IconComponent 
-                          className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" 
-                        />
-                      )
-                    }}
-                    onClick={() => {
-                      // Close mobile sidebar when a link is clicked
-                      if (window.innerWidth < 768) {
-                        setSidebarOpen(false);
-                      }
-                    }}
-                  />
-                );
-              })}
+      {/* Desktop Sidebar */}
+      <div className="hidden md:block">
+        <AnimatedSidebar open={sidebarOpen} setOpen={setSidebarOpen}>
+          <SidebarBody className="justify-between gap-10 h-full">
+            <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
+              {sidebarOpen ? <DisasterIQLogo /> : <DisasterIQLogoIcon />}
+              <div className="mt-8 flex flex-col gap-2">
+                {sidebarLinks.map((link, idx) => {
+                  const IconComponent = link.icon;
+                  return (
+                    <SidebarLink 
+                      key={idx} 
+                      link={{
+                        ...link,
+                        icon: (
+                          <IconComponent 
+                            className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" 
+                          />
+                        )
+                      }}
+                    />
+                  );
+                })}
+              </div>
             </div>
-          </div>
-          <div className="hidden md:block mt-auto">
-            <SidebarLink
-              link={{
-                label: "Pratyush",
-                href: "#",
-                icon: (
-                  <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+            <div className="mt-auto">
+              <SidebarLink
+                link={{
+                  label: "Pratyush",
+                  href: "#",
+                  icon: (
+                    <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+                      P
+                    </div>
+                  ),
+                }}
+              />
+            </div>
+          </SidebarBody>
+        </AnimatedSidebar>
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed inset-0 z-50 md:hidden"
+          >
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+              onClick={() => setSidebarOpen(false)}
+            />
+            
+            {/* Mobile Sidebar */}
+            <div className={`relative w-80 h-full ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-xl flex flex-col`}>
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <DisasterIQLogo />
+                <button
+                  onClick={() => setSidebarOpen(false)}
+                  className={`p-2 rounded-lg ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              
+              <div className="flex-1 p-4 overflow-y-auto">
+                <div className="flex flex-col gap-2">
+                  {sidebarLinks.map((link, idx) => {
+                    const IconComponent = link.icon;
+                    return (
+                      <a
+                        key={idx}
+                        href={link.href}
+                        onClick={() => setSidebarOpen(false)}
+                        className={`flex items-center gap-3 p-3 rounded-lg ${isDark ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-gray-100 text-gray-700'} transition-colors`}
+                      >
+                        <IconComponent className="h-5 w-5 shrink-0" />
+                        <span className="text-sm font-medium">{link.label}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-3 p-3 rounded-lg">
+                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
                     P
                   </div>
-                ),
-              }}
-            />
-          </div>
-        </SidebarBody>
-      </AnimatedSidebar>
+                  <span className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                    Pratyush
+                  </span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col overflow-hidden h-screen">
         {/* Header */}
-        <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-3 py-3 md:px-6 md:py-4 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md bg-opacity-95 shrink-0`}>
+        <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-4 py-3 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md bg-opacity-95 shrink-0`}>
           <div className="flex items-center gap-3">
             {/* Mobile menu button */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className={`md:hidden p-2 rounded-lg ${isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} transition-colors`}
             >
-              {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <Menu className="h-5 w-5" />
             </button>
-            <h1 className={`text-lg md:text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'} truncate`}>
+            <h1 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'} truncate`}>
               Dashboard
             </h1>
           </div>
-          <div className="flex items-center gap-2 md:gap-4">
+          
+          <div className="flex items-center gap-3">
             <button
               onClick={() => setIsDark(!isDark)}
               className={`p-2 rounded-lg ${isDark ? 'bg-gray-700 text-yellow-400' : 'bg-gray-100 text-gray-600'} hover:opacity-80 transition-all`}
             >
-              {isDark ? <Sun className="h-4 w-4 md:h-5 md:w-5" /> : <Moon className="h-4 w-4 md:h-5 md:w-5" />}
+              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
-            <div className={`hidden sm:flex px-2 md:px-3 py-1 rounded-full text-xs font-medium ${
+            
+            <div className={`hidden sm:flex px-3 py-1 rounded-full text-xs font-medium ${
               isConnected() 
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
                 : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
@@ -191,6 +244,7 @@ export default function DashboardLayout({
               <span className="hidden md:inline">{isConnected() ? 'Connected' : 'Disconnected'}</span>
               <div className={`w-2 h-2 rounded-full md:hidden ${isConnected() ? 'bg-green-500' : 'bg-red-500'}`}></div>
             </div>
+            
             {/* Mobile user indicator */}
             <div className="md:hidden">
               <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
@@ -201,14 +255,13 @@ export default function DashboardLayout({
         </div>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto px-3 py-4 md:px-6 md:py-6 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <AnimatePresence mode="wait">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.2 }}
-              className="h-full"
             >
               {children}
             </motion.div>

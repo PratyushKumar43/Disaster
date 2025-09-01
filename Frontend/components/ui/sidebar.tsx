@@ -73,7 +73,7 @@ export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => {
   return (
     <>
       <DesktopSidebar {...props} />
-      <MobileSidebar {...(props as React.ComponentProps<"div">)} />
+      {/* Remove MobileSidebar since we handle mobile in the layout */}
     </>
   );
 };

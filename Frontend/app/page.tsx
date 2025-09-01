@@ -2,6 +2,8 @@
 
 import { motion, useInView } from "motion/react";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { 
   Compass, 
   Route, 
@@ -175,16 +177,18 @@ function MobileMenu({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: 
       className={`md:hidden border-t border-white/10 mt-2 pt-2 pb-3 overflow-hidden`}
     >
       <div className="grid gap-2">
-        <a href="#" className="px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm font-medium text-white/90 font-geist">Dashboard</a>
-        <a href="#" className="px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm font-medium text-white/80 font-geist">Inventory</a>
-        <a href="#" className="px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm font-medium text-white/80 font-geist">Reports</a>
+        <Link href="/dashboard" className="px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm font-medium text-white/90 font-geist">Dashboard</Link>
+        <Link href="/dashboard/inventory" className="px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm font-medium text-white/80 font-geist">Inventory</Link>
+        <Link href="/dashboard/reports" className="px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm font-medium text-white/80 font-geist">Reports</Link>
         <a href="#" className="px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm font-medium text-white/80 font-geist">Resources</a>
         <div className="flex items-center justify-between gap-2 pt-2">
           <a href="#" className="text-sm font-medium text-white/80 font-geist">Sign in</a>
-          <a href="#" className="inline-flex items-center gap-2 rounded-full bg-white text-gray-900 px-4 py-2 text-sm font-semibold hover:bg-white/90 transition font-geist">
-            <Sparkles className="h-4 w-4" />
-            Get started
-          </a>
+          <Link href="/dashboard">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white text-gray-900 px-4 py-2 text-sm font-semibold hover:bg-white/90 transition font-geist cursor-pointer">
+              <Sparkles className="h-4 w-4" />
+              Get started
+            </div>
+          </Link>
         </div>
       </div>
     </motion.div>
@@ -206,7 +210,7 @@ function Navigation() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Brand */}
-          <a href="#" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <span className={`inline-flex h-8 w-8 items-center justify-center rounded-md backdrop-blur ${
               isDarkMode 
                 ? 'bg-white/10 ring-1 ring-white/15' 
@@ -217,25 +221,25 @@ function Navigation() {
             <span className={`uppercase text-lg font-semibold tracking-tighter font-bricolage ${
               isDarkMode ? 'text-white' : 'text-gray-900'
             }`}>DisasterIQ</span>
-          </a>
+          </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-2">
-            <a href="#" className={`px-3 py-1.5 rounded-full ring-1 text-sm font-medium transition font-geist ${
+            <Link href="/dashboard" className={`px-3 py-1.5 rounded-full ring-1 text-sm font-medium transition font-geist ${
               isDarkMode 
                 ? 'bg-white/5 ring-white/15 text-white/90 hover:bg-white/10' 
                 : 'bg-gray-900/5 ring-gray-900/15 text-gray-900/90 hover:bg-gray-900/10'
-            }`}>Dashboard</a>
-            <a href="#" className={`px-3 py-1.5 rounded-full ring-1 text-sm font-medium transition font-geist ${
+            }`}>Dashboard</Link>
+            <Link href="/dashboard/inventory" className={`px-3 py-1.5 rounded-full ring-1 text-sm font-medium transition font-geist ${
               isDarkMode 
                 ? 'bg-white/5 ring-white/15 text-white/70 hover:text-white/90 hover:bg-white/10' 
                 : 'bg-gray-900/5 ring-gray-900/15 text-gray-900/70 hover:text-gray-900/90 hover:bg-gray-900/10'
-            }`}>Inventory</a>
-            <a href="#" className={`px-3 py-1.5 rounded-full ring-1 text-sm font-medium transition font-geist ${
+            }`}>Inventory</Link>
+            <Link href="/dashboard/reports" className={`px-3 py-1.5 rounded-full ring-1 text-sm font-medium transition font-geist ${
               isDarkMode 
                 ? 'bg-white/5 ring-white/15 text-white/70 hover:text-white/90 hover:bg-white/10' 
                 : 'bg-gray-900/5 ring-gray-900/15 text-gray-900/70 hover:text-gray-900/90 hover:bg-gray-900/10'
-            }`}>Reports</a>
+            }`}>Reports</Link>
             <a href="#" className={`px-3 py-1.5 rounded-full ring-1 text-sm font-medium transition font-geist ${
               isDarkMode 
                 ? 'bg-white/5 ring-white/15 text-white/70 hover:text-white/90 hover:bg-white/10' 
@@ -249,13 +253,15 @@ function Navigation() {
             <a href="#" className={`text-sm font-medium transition font-geist ${
               isDarkMode ? 'text-white/80 hover:text-white' : 'text-gray-900/80 hover:text-gray-900'
             }`}>Sign in</a>
-            <a href="#" className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition font-geist ${
-              isDarkMode 
-                ? 'bg-white text-gray-900 hover:bg-white/90' 
-                : 'bg-gray-900 text-white hover:bg-gray-900/90'
-            }`}>
-              Get started
-            </a>
+            <Link href="/dashboard">
+              <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition font-geist cursor-pointer ${
+                isDarkMode 
+                  ? 'bg-white text-gray-900 hover:bg-white/90' 
+                  : 'bg-gray-900 text-white hover:bg-gray-900/90'
+              }`}>
+                Get started
+              </div>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -346,18 +352,20 @@ function HeroSection() {
           transition={{ duration: 0.6, delay: 1.0 }}
           className="flex gap-3 mt-8 items-center justify-center"
         >
-          <motion.a 
-            href="#" 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition font-geist ${
-              isDarkMode 
-                ? 'bg-white text-gray-900 hover:bg-white/90' 
-                : 'bg-gray-900 text-white hover:bg-gray-900/90'
-            }`}
-          >
-            Access Dashboard
-          </motion.a>
+          <Link href="/dashboard">
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition font-geist cursor-pointer ${
+                isDarkMode 
+                  ? 'bg-white text-gray-900 hover:bg-white/90' 
+                  : 'bg-gray-900 text-white hover:bg-gray-900/90'
+              }`}
+            >
+              Access Dashboard
+              <ArrowRight className="h-4 w-4" />
+            </motion.div>
+          </Link>
           <motion.a 
             href="#" 
             whileHover={{ scale: 1.05 }}
