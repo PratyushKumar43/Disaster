@@ -3,7 +3,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   transpilePackages: ['framer-motion'],
   images: {
-    domains: ['openweathermap.org'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'openweathermap.org',
+        pathname: '/**',
+      }
+    ],
     unoptimized: true,
   },
   eslint: {
@@ -12,13 +18,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  poweredByHeader: false,
   experimental: {
-    serverActions: {
-      allowedOrigins: ['localhost:3000', '*.vercel.app'],
-    },
-  },
-  env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
+    optimizePackageImports: ['@tabler/icons-react', 'lucide-react']
   },
 };
 
