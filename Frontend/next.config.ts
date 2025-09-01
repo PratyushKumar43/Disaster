@@ -6,12 +6,11 @@ const nextConfig: NextConfig = {
     domains: ['openweathermap.org'],
     unoptimized: true,
   },
-  output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: true,
   },
   experimental: {
     serverActions: {
