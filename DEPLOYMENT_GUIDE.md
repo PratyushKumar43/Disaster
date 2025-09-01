@@ -117,16 +117,26 @@ SMTP_PASS=your_app_password
 2. **Create vercel.json** in the Frontend directory:
    ```json
    {
-     "builds": [
-       {
-         "src": "package.json",
-         "use": "@vercel/next"
-       }
-     ],
+     "version": 2,
      "regions": ["iad1"],
      "env": {
        "NEXT_PUBLIC_API_URL": "@next_public_api_url"
-     }
+     },
+     "headers": [
+       {
+         "source": "/(.*)",
+         "headers": [
+           {
+             "key": "X-Content-Type-Options",
+             "value": "nosniff"
+           },
+           {
+             "key": "X-Frame-Options",
+             "value": "DENY"
+           }
+         ]
+       }
+     ]
    }
    ```
 
@@ -286,6 +296,20 @@ app.get('/health', (req, res) => {
      3. Scroll to "Build & Deploy" section
      4. Set **Root Directory** to `backend`
      5. Save changes and redeploy
+
+6. **Route Not Found Error**:
+   - **Error**: `Route / not found`
+   - **Cause**: Render's health check tries to access root URL `/` but no route is defined
+   - **Solution**: Ensure your server.js has a root route handler:
+   ```javascript
+   app.get('/', (req, res) => {
+     res.status(200).json({
+       success: true,
+       message: 'API is running',
+       status: 'healthy'
+     });
+   });
+   ```
 
 ### Common Frontend Issues
 
