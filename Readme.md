@@ -85,27 +85,21 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-disaster-management/
-├── app/                          # Next.js app directory
-│   ├── dashboard/               # Dashboard pages
-│   ├── globals.css             # Global styles
-│   ├── layout.tsx              # Root layout
-│   └── page.tsx                # Landing page
-├── backend/                     # Node.js backend
+disaster/
+├── backend/                    # Node.js/Express backend
 │   ├── src/
-│   │   ├── config/             # Database and app configuration
-│   │   ├── controllers/        # Route controllers
-│   │   ├── middleware/         # Auth and error handling
-│   │   ├── models/             # MongoDB schemas
-│   │   ├── routes/             # API routes
-│   │   └── utils/              # Utilities and validators
-│   ├── server.js               # Main server file
-│   └── package.json            # Backend dependencies
-├── lib/                        # Shared utilities
-│   ├── api.ts                  # API client functions
-│   ├── socket.ts               # Socket.io client
-│   └── utils.ts                # Utility functions
-└── components.json             # shadcn/ui configuration
+│   ├── package.json
+│   ├── server.js
+│   └── ... (backend files)
+│
+├── Frontend/                   # Next.js frontend ✅
+│   ├── app/                   # Next.js 13+ app directory
+│   ├── next.config.ts         # ✅ Correctly placed here
+│   ├── package.json           # Frontend dependencies
+│   ├── tsconfig.json          # TypeScript config
+│   └── ... (frontend files)
+│
+└── (no duplicate config files) ✅
 ```
 
 ## 🔧 API Endpoints

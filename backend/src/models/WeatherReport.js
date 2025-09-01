@@ -256,3 +256,4 @@ weatherReportSchema.set('toObject', { virtuals: true });
 
 module.exports = mongoose.model('WeatherReport', weatherReportSchema);
 
+
