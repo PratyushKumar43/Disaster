@@ -3,10 +3,16 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
 # Next.js
 .next/
 out/
+dist/
+build/
+
+# Vercel
+.vercel
 
 # Environment variables
 .env
@@ -14,27 +20,89 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.example
 
-# Database seeding scripts (contains sensitive data)
-backend/seed-departments.js
+# API keys and credentials
+*.key
+*.pem
+*-key.json
+service-account*.json
+earth-engine-*.json
 
-# IDE
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+pipenv/
+Pipfile.lock
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDEs and editors
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
-# OS
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
 
 # Logs
 logs
 *.log
+log/
 
 # Runtime data
 pids
 *.pid
 *.seed
 *.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# ESLint cache
+.eslintcache
 
 # Optional npm cache directory
 .npm
@@ -48,33 +116,59 @@ pids
 # Yarn Integrity file
 .yarn-integrity
 
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
+# TypeScript cache
+*.tsbuildinfo
 
-# Media files (large video files)
+# Temporary folders
+tmp/
+temp/
+.tmp/
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Build outputs
+*.out
+*.exe
+
+# Large media files (should be hosted elsewhere or use Git LFS)
 *.mp4
 *.avi
 *.mov
 *.wmv
+*.mkv
+*.flv
+*.webm
 
-# Database
-*.sqlite
-*.db
+# Large image files (consider optimization)
+*.psd
+*.ai
+*.eps
 
-# Build directories
-dist/
-build/
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
 
-# Coverage reports
+# Dependency locks that might cause conflicts
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Production config files
+deploy.yaml
+deploy-*.yaml
+Dockerfile.*
+
+# Monitoring and testing
+.nyc_output
 coverage/
 
-# ESLint cache
-.eslintcache
+# Storybook build outputs
+storybook-static
 
-# TypeScript cache
-*.tsbuildinfo
-
-# Temporary files
-.tmp/
-temp/
+# Local development
+.local
+.dev
