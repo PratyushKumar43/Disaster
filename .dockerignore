@@ -1,0 +1,44 @@
+# Directories
+node_modules/
+npm-debug.log
+.npm
+.git
+.gitignore
+README.md
+.env
+.env.local
+.env.development
+.env.test
+coverage/
+.nyc_output/
+
+# Files
+Dockerfile
+Dockerfile.*
+docker-compose*.yml
+.dockerignore
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Test files
+test/
+tests/
+*.test.js
+*.spec.js

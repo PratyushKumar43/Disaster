@@ -393,9 +393,10 @@ const startServer = async () => {
     // Connect to database
     await connectDB();
     
-    const PORT = process.env.PORT || 5001;
+    // Use PORT from environment, default to 10000 for production (Akash), 5001 for development
+    const PORT = process.env.PORT || (process.env.NODE_ENV === 'production' ? 10000 : 5001);
     
-    server.listen(PORT, () => {
+    server.listen(PORT, '0.0.0.0', () => {
       logger.info(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
       logger.info(`📚 API Documentation: http://localhost:${PORT}/api/docs`);
       logger.info(`🏥 Health Check: http://localhost:${PORT}/health`);

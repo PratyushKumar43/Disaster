@@ -12,7 +12,10 @@ class SocketService {
       return this.socket;
     }
 
-    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 
+      (process.env.NODE_ENV === 'production' 
+        ? 'https://your-backend-domain.com' 
+        : 'http://localhost:5001');
 
     this.socket = io(socketUrl, {
       transports: ['websocket', 'polling'],
