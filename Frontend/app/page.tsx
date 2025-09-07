@@ -179,7 +179,6 @@ function MobileMenu({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: 
       <div className="grid gap-2">
         <Link href="/dashboard" className="px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm font-medium text-white/90 font-geist">Dashboard</Link>
         <Link href="/dashboard/inventory" className="px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm font-medium text-white/80 font-geist">Inventory</Link>
-        <Link href="/dashboard/reports" className="px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm font-medium text-white/80 font-geist">Reports</Link>
         <a href="#" className="px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm font-medium text-white/80 font-geist">Resources</a>
         <div className="flex items-center justify-between gap-2 pt-2">
           <a href="#" className="text-sm font-medium text-white/80 font-geist">Sign in</a>

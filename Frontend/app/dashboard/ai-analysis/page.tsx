@@ -8,3 +8,4 @@ export default function AIAnalysisPage() {
 
   return <AIAnalysisView isDark={isDark} />;
 }
+

@@ -8,3 +8,4 @@ export default function DashboardPage() {
 
   return <DashboardOverview isDark={isDark} />;
 }
+

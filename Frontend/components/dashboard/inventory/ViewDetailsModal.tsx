@@ -255,3 +255,4 @@ export function ViewDetailsModal({ isOpen, onClose, item, isDark }: ViewDetailsM
     </AnimatePresence>
   );
 }
+

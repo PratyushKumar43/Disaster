@@ -764,6 +764,57 @@ export const weatherAPI = {
   }
 };
 
+// AI Analysis API
+export const aiAnalysisAPI = {
+  // Generate disaster analysis report
+  generateAnalysisReport: async (data: {
+    state: string;
+    disasterType: string;
+    timeframe?: string;
+    dateRange?: {
+      type: 'preset' | 'custom' | 'specific';
+      startDate?: string;
+      endDate?: string;
+      year?: string;
+      month?: string;
+    };
+    analysisType?: string;
+  }): Promise<ApiResponse<any>> => {
+    const response = await api.post('/ai-analysis/generate-report', data);
+    return response.data;
+  },
+
+  // Download analysis report as PDF
+  downloadReportPDF: async (reportId: string): Promise<Blob> => {
+    const response = await api.get(`/ai-analysis/download-pdf/${reportId}`, {
+      responseType: 'blob'
+    });
+    return response.data;
+  },
+
+  // Get list of Indian states
+  getIndianStates: async (): Promise<ApiResponse<string[]>> => {
+    const response = await api.get('/ai-analysis/states');
+    return response.data;
+  },
+
+  // Get list of disaster types
+  getDisasterTypes: async (): Promise<ApiResponse<string[]>> => {
+    const response = await api.get('/ai-analysis/disaster-types');
+    return response.data;
+  },
+
+  // Get recent analysis reports
+  getRecentReports: async (params?: {
+    state?: string;
+    disasterType?: string;
+    limit?: number;
+  }): Promise<ApiResponse<any[]>> => {
+    const response = await api.get('/ai-analysis/reports', { params });
+    return response.data;
+  }
+};
+
 // Export APIs and types (auth functions removed)
 export {
   api

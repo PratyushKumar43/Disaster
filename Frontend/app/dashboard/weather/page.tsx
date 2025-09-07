@@ -18,3 +18,4 @@ export default function WeatherPage() {
 
   return <ModernWeatherDashboard isDark={isDark} />;
 }
+

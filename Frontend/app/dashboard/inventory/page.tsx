@@ -8,3 +8,4 @@ export default function InventoryPage() {
 
   return <InventoryView isDark={isDark} />;
 }
+

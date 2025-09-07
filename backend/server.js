@@ -23,6 +23,8 @@ const departmentRoutes = require('./src/routes/departments');
 const transactionRoutes = require('./src/routes/transactions');
 const weatherRoutes = require('./src/routes/weather');
 const testRoutes = require('./src/routes/test');
+const fireRiskRoutes = require('./src/routes/fireRisk');
+const aiAnalysisRoutes = require('./src/routes/aiAnalysis');
 
 // Import middleware
 const { 
@@ -202,7 +204,9 @@ app.get('/', (req, res) => {
       inventory: '/api/v1/inventory',
       departments: '/api/v1/departments',
       transactions: '/api/v1/transactions',
-      weather: '/api/v1/weather'
+      weather: '/api/v1/weather',
+      fireRisk: '/api/v1/fire-risk',
+      aiAnalysis: '/api/v1/ai-analysis'
     },
     timestamp: new Date().toISOString()
   });
@@ -224,7 +228,9 @@ app.get('/api', (req, res) => {
       inventory: '/api/v1/inventory',
       departments: '/api/v1/departments',
       transactions: '/api/v1/transactions',
-      weather: '/api/v1/weather'
+      weather: '/api/v1/weather',
+      fireRisk: '/api/v1/fire-risk',
+      aiAnalysis: '/api/v1/ai-analysis'
     }
   });
 });
@@ -241,6 +247,8 @@ app.get('/api/v1', (req, res) => {
       departments: '/api/v1/departments',
       transactions: '/api/v1/transactions',
       weather: '/api/v1/weather',
+      fireRisk: '/api/v1/fire-risk',
+      aiAnalysis: '/api/v1/ai-analysis',
       test: '/api/v1/test'
     },
     timestamp: new Date().toISOString()
@@ -252,6 +260,8 @@ app.use('/api/v1/inventory', inventoryRoutes);
 app.use('/api/v1/departments', departmentRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
 app.use('/api/v1/weather', weatherRoutes);
+app.use('/api/v1/fire-risk', fireRiskRoutes);
+app.use('/api/v1/ai-analysis', aiAnalysisRoutes);
 app.use('/api/v1/test', testRoutes);
 
 // Error handling middleware (order matters!)

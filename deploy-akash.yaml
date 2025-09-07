@@ -1,0 +1,47 @@
+---
+version: "2.0"
+
+services:
+  web:
+    image: pratyushkumar43/disaster-backend:latest
+    expose:
+      - port: 10000
+        as: 80
+        to:
+          - global: true
+    env:
+      - NODE_ENV=production
+      - PORT=10000
+      - MONGODB_URI=mongodb+srv://pratyush:password@cluster0.mongodb.net/disaster-management?retryWrites=true&w=majority
+      - NEXT_PUBLIC_WINDY_API_KEY=rAGw9PDkowiAiBLmmvuJCWqRhLlYXCmT
+      - CORS_ORIGIN=*
+
+profiles:
+  compute:
+    web:
+      resources:
+        cpu:
+          units: 1.0
+        memory:
+          size: 1Gi
+        storage:
+          - size: 2Gi
+
+  placement:
+    dcloud:
+      attributes:
+        host: akash
+      signedBy:
+        anyOf:
+          - "akash1365yvmc4s7awdyj3n2sav7xfx76adc6dnmlx63"
+          - "akash18qa2a2ltfyvkyj0ggj3hkvuj6twzyumuaru9s4"
+      pricing:
+        web:
+          denom: uakt
+          amount: 1000
+
+deployment:
+  web:
+    dcloud:
+      profile: web
+      count: 1

@@ -6,7 +6,14 @@ const ExcelJS = require('exceljs');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
+
+// Mock ChartJSNodeCanvas for production deployment
+const ChartJSNodeCanvas = class {
+  constructor() {}
+  async renderToBuffer() {
+    return Buffer.from('Chart rendering not available in this deployment');
+  }
+};
 
 /**
  * Weather Report Controller - Handles weather report generation
