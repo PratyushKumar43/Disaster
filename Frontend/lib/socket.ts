@@ -14,7 +14,7 @@ class SocketService {
 
     const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 
       (process.env.NODE_ENV === 'production' 
-        ? 'https://your-backend-domain.com' 
+        ? 'https://disaster-5ef1.onrender.com' 
         : 'http://localhost:5000');
 
     this.socket = io(socketUrl, {

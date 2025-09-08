@@ -3,7 +3,7 @@
  * Handles all API calls for fire risk prediction and analysis using direct Bhuvan API
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://disaster-5ef1.onrender.com/api/v1';
 
 // TypeScript interfaces for Fire Risk data
 export interface FireRiskLocation {

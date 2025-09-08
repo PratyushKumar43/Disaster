@@ -22,22 +22,8 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['@tabler/icons-react', 'lucide-react']
   },
-  // Ensure proper routing for Vercel
-  trailingSlash: false,
-  async redirects() {
-    return [
-      // Add any redirects if needed
-    ]
-  },
-  // Handle 404 pages properly
-  async rewrites() {
-    return [
-      {
-        source: '/:path*',
-        destination: '/:path*'
-      }
-    ]
-  }
+  // Simple configuration for Vercel
+  trailingSlash: false
 };
 
 export default nextConfig;
