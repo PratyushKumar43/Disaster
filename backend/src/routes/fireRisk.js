@@ -3,110 +3,191 @@ const router = express.Router();
 const fireRiskController = require('../controllers/fireRiskController');
 
 /**
- * Fire Risk API Routes
- * Provides endpoints for ML-based fire risk predictions and analysis
+ * @swagger
+ * /api/v1/fire-risk/current:
+ *   get:
+ *     summary: Get current fire risk for a location
+ *     tags: [Fire Risk]
+ *     parameters:
+ *       - in: query
+ *         name: latitude
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: Latitude coordinate
+ *       - in: query
+ *         name: longitude
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: Longitude coordinate
+ *       - in: query
+ *         name: region
+ *         schema:
+ *           type: string
+ *         description: Region name (optional)
+ *     responses:
+ *       200:
+ *         description: Fire risk assessment
+ *       400:
+ *         description: Invalid parameters
+ *       500:
+ *         description: Server error
  */
+router.get('/current', fireRiskController.getCurrentFireRisk);
 
 /**
- * @route GET /api/fire-risk/current
- * @desc Get current fire risk for a specific location
- * @access Public
- * @param {number} latitude - Latitude coordinate (required)
- * @param {number} longitude - Longitude coordinate (required)
- * @param {string} region - Region name (optional, auto-detected if not provided)
- * @example /api/fire-risk/current?latitude=28.6139&longitude=77.2090&region=Delhi
+ * @swagger
+ * /api/v1/fire-risk/hotspots:
+ *   get:
+ *     summary: Get fire hotspots from Bhuvan API
+ *     tags: [Fire Risk]
+ *     parameters:
+ *       - in: query
+ *         name: centerLat
+ *         schema:
+ *           type: number
+ *         description: Center latitude for radius-based search
+ *       - in: query
+ *         name: centerLon
+ *         schema:
+ *           type: number
+ *         description: Center longitude for radius-based search
+ *       - in: query
+ *         name: radius
+ *         schema:
+ *           type: number
+ *           default: 50
+ *         description: Search radius in kilometers
+ *       - in: query
+ *         name: minLat
+ *         schema:
+ *           type: number
+ *         description: Minimum latitude for bounding box search
+ *       - in: query
+ *         name: maxLat
+ *         schema:
+ *           type: number
+ *         description: Maximum latitude for bounding box search
+ *       - in: query
+ *         name: minLon
+ *         schema:
+ *           type: number
+ *         description: Minimum longitude for bounding box search
+ *       - in: query
+ *         name: maxLon
+ *         schema:
+ *           type: number
+ *         description: Maximum longitude for bounding box search
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date for fire detection (YYYY-MM-DD)
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date for fire detection (YYYY-MM-DD)
+ *       - in: query
+ *         name: riskThreshold
+ *         schema:
+ *           type: number
+ *           default: 0.6
+ *         description: Minimum risk threshold (0-1)
+ *     responses:
+ *       200:
+ *         description: Fire hotspots data
+ *       500:
+ *         description: Server error
  */
-router.get('/current', fireRiskController.getCurrentRisk);
+router.get('/hotspots', fireRiskController.getFireHotspots);
 
 /**
- * @route POST /api/fire-risk/risk-map
- * @desc Generate fire risk map for a region or custom bounds
- * @access Public
- * @body {object} Request body containing region, bounds, or centerLocation
- * @example 
- * {
- *   "centerLocation": { "latitude": 28.6139, "longitude": 77.2090, "radius": 2.0 },
- *   "region": "Delhi",
- *   "date": "2023-12-15"
- * }
+ * @swagger
+ * /api/v1/fire-risk/spread-simulation:
+ *   post:
+ *     summary: Generate fire spread simulation
+ *     tags: [Fire Risk]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - startLat
+ *               - startLon
+ *             properties:
+ *               startLat:
+ *                 type: number
+ *                 description: Starting latitude
+ *               startLon:
+ *                 type: number
+ *                 description: Starting longitude
+ *               windSpeed:
+ *                 type: number
+ *                 default: 10
+ *                 description: Wind speed in km/h
+ *               windDirection:
+ *                 type: number
+ *                 default: 0
+ *                 description: Wind direction in degrees (0-360)
+ *               temperature:
+ *                 type: number
+ *                 default: 30
+ *                 description: Temperature in Celsius
+ *               humidity:
+ *                 type: number
+ *                 default: 40
+ *                 description: Relative humidity percentage
+ *               fuelMoisture:
+ *                 type: number
+ *                 default: 10
+ *                 description: Fuel moisture percentage
+ *               simulationHours:
+ *                 type: integer
+ *                 default: 24
+ *                 description: Simulation duration in hours
+ *     responses:
+ *       200:
+ *         description: Fire spread simulation data
+ *       400:
+ *         description: Invalid parameters
+ *       500:
+ *         description: Server error
  */
-router.post('/risk-map', fireRiskController.generateRiskMap);
+router.post('/spread-simulation', fireRiskController.generateFireSpreadSimulation);
 
 /**
- * @route GET /api/fire-risk/historical
- * @desc Get historical fire risk data with optional filtering
- * @access Public
- * @param {string} region - Region name (optional)
- * @param {string} startDate - Start date in ISO format (optional)
- * @param {string} endDate - End date in ISO format (optional)
- * @param {number} latitude - Latitude for location-based search (optional)
- * @param {number} longitude - Longitude for location-based search (optional)
- * @example /api/fire-risk/historical?region=Uttarakhand&startDate=2023-12-01&endDate=2023-12-15
+ * @swagger
+ * /api/v1/fire-risk/analytics:
+ *   get:
+ *     summary: Get fire risk analytics for a region
+ *     tags: [Fire Risk]
+ *     parameters:
+ *       - in: query
+ *         name: region
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Region name
+ *       - in: query
+ *         name: days
+ *         schema:
+ *           type: integer
+ *           default: 7
+ *         description: Number of days for analytics
+ *     responses:
+ *       200:
+ *         description: Fire risk analytics data
+ *       400:
+ *         description: Invalid parameters
+ *       500:
+ *         description: Server error
  */
-router.get('/historical', fireRiskController.getHistoricalRisk);
-
-/**
- * @route GET /api/fire-risk/hotspots
- * @desc Get current fire risk hotspots with high risk levels
- * @access Public
- * @param {string} region - Region name (optional)
- * @param {string} date - Date in ISO format (optional, defaults to today)
- * @param {number} riskThreshold - Minimum risk score threshold (default: 0.6)
- * @param {string} centerLocation - JSON string with center location and radius (optional)
- * @example /api/fire-risk/hotspots?region=Maharashtra&riskThreshold=0.7&centerLocation={"latitude":19.0760,"longitude":72.8777,"radius":1.5}
- */
-router.get('/hotspots', fireRiskController.getHotspots);
-
-/**
- * @route GET /api/fire-risk/analytics
- * @desc Get fire risk analytics and trends
- * @access Public
- * @param {string} region - Region name (optional)
- * @param {number} period - Analysis period in days (default: 7)
- * @example /api/fire-risk/analytics?region=Punjab&period=30
- */
-router.get('/analytics', fireRiskController.getAnalytics);
-
-/**
- * @route POST /api/fire-risk/batch-predict
- * @desc Batch prediction for multiple locations
- * @access Public
- * @body {object} Request body with locations array
- * @example
- * {
- *   "locations": [
- *     { "latitude": 28.6139, "longitude": 77.2090 },
- *     { "latitude": 19.0760, "longitude": 72.8777 },
- *     { "latitude": 22.5726, "longitude": 88.3639 }
- *   ]
- * }
- */
-router.post('/batch-predict', fireRiskController.batchPredict);
-
-// Error handling middleware for this route
-router.use((error, req, res, next) => {
-  console.error('Fire Risk API Error:', error);
-  
-  if (error.name === 'ValidationError') {
-    return res.status(400).json({
-      success: false,
-      message: 'Validation error',
-      details: Object.values(error.errors).map(e => e.message)
-    });
-  }
-  
-  if (error.name === 'CastError') {
-    return res.status(400).json({
-      success: false,
-      message: 'Invalid parameter format'
-    });
-  }
-  
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error',
-    error: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
-  });
-});
+router.get('/analytics', fireRiskController.getFireRiskAnalytics);
 
 module.exports = router;

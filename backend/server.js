@@ -22,7 +22,6 @@ const inventoryRoutes = require('./src/routes/inventory');
 const departmentRoutes = require('./src/routes/departments');
 const transactionRoutes = require('./src/routes/transactions');
 const weatherRoutes = require('./src/routes/weather');
-const testRoutes = require('./src/routes/test');
 const fireRiskRoutes = require('./src/routes/fireRisk');
 const aiAnalysisRoutes = require('./src/routes/aiAnalysis');
 
@@ -122,7 +121,7 @@ app.use(cors({
       process.env.FRONTEND_URL || 'http://localhost:3000',
       'http://localhost:3000',
       'http://127.0.0.1:3000',
-      'https://disaster-rudkly.vercel.app',
+      'https://disasterapp-ten.vercel.app',
       'https://*.vercel.app'
     ];
     
@@ -229,7 +228,6 @@ app.get('/api', (req, res) => {
       departments: '/api/v1/departments',
       transactions: '/api/v1/transactions',
       weather: '/api/v1/weather',
-      fireRisk: '/api/v1/fire-risk',
       aiAnalysis: '/api/v1/ai-analysis'
     }
   });
@@ -248,8 +246,7 @@ app.get('/api/v1', (req, res) => {
       transactions: '/api/v1/transactions',
       weather: '/api/v1/weather',
       fireRisk: '/api/v1/fire-risk',
-      aiAnalysis: '/api/v1/ai-analysis',
-      test: '/api/v1/test'
+      aiAnalysis: '/api/v1/ai-analysis'
     },
     timestamp: new Date().toISOString()
   });
@@ -262,7 +259,6 @@ app.use('/api/v1/transactions', transactionRoutes);
 app.use('/api/v1/weather', weatherRoutes);
 app.use('/api/v1/fire-risk', fireRiskRoutes);
 app.use('/api/v1/ai-analysis', aiAnalysisRoutes);
-app.use('/api/v1/test', testRoutes);
 
 // Error handling middleware (order matters!)
 app.use(corsErrorHandler);
@@ -393,8 +389,8 @@ const startServer = async () => {
     // Connect to database
     await connectDB();
     
-    // Use PORT from environment, default to 10000 for production (Akash), 5001 for development
-    const PORT = process.env.PORT || (process.env.NODE_ENV === 'production' ? 10000 : 5001);
+    // Use PORT from environment, default to 10000 for production (Akash), 5000 for development
+    const PORT = process.env.PORT || (process.env.NODE_ENV === 'production' ? 10000 : 5000);
     
     server.listen(PORT, '0.0.0.0', () => {
       logger.info(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);

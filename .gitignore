@@ -18,6 +18,11 @@ build/
 .env
 .env.local
 .env.development.local
+
+# Google Cloud Credentials
+credentials.json
+**/credentials.json
+service-account-key.json
 .env.test.local
 .env.production.local
 .env.example
