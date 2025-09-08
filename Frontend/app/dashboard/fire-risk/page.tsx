@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Loader2, MapPin, TrendingUp, AlertTriangle, BarChart3 } from 'lucide-react';
+import BhuvanMap from '@/components/BhuvanMap';
 import {
   fireRiskAPI,
   FireRiskPrediction,
@@ -398,6 +399,14 @@ const FireRiskDashboard: React.FC = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Interactive Bhuvan Map */}
+      <BhuvanMap
+        hotspots={hotspots}
+        center={currentLocation}
+        onLocationSelect={handleLocationChange}
+        className="w-full"
+      />
 
       {/* Fire Hotspots */}
       {hotspots.length > 0 && (
