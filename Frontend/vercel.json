@@ -38,10 +38,5 @@
       ]
     }
   ],
-  "functions": {
-    "app/**/*.{js,ts,tsx}": {
-      "maxDuration": 30
-    }
-  },
   "buildCommand": "npm run build"
 }
