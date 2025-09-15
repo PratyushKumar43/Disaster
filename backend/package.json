@@ -10,7 +10,9 @@
     "test:watch": "jest --watch",
     "test:weather-reports": "node test-weather-report-routes.js",
     "verify-deployment": "node verify-deployment.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "seed:departments": "node seed-departments.js",
+    "seed:inventory": "node seed-inventory.js"
   },
   "keywords": [
     "disaster-management",

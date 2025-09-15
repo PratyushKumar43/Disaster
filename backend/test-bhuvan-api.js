@@ -78,45 +78,6 @@ async function testBackendAPI() {
     return false;
   }
 
-  // Test fire risk endpoints
-  for (const location of testLocations.slice(0, 3)) { // Test first 3 locations
-    try {
-      logTest(`Fire Risk - ${location.name}`);
-      
-      const riskResponse = await axios.get(
-        `${baseURL}/fire-risk/current?latitude=${location.lat}&longitude=${location.lon}`,
-        { timeout: 10000 }
-      );
-      
-      if (riskResponse.status === 200) {
-        logSuccess(`Got fire risk data for ${location.name}`);
-        logInfo(`Risk Level: ${riskResponse.data.data.riskLevel}`);
-        logInfo(`Risk Score: ${(riskResponse.data.data.riskScore * 100).toFixed(1)}%`);
-      }
-    } catch (error) {
-      logError(`Failed to get fire risk for ${location.name}: ${error.message}`);
-    }
-
-    try {
-      logTest(`Fire Hotspots - ${location.name}`);
-      
-      const hotspotsResponse = await axios.get(
-        `${baseURL}/fire-risk/hotspots?centerLat=${location.lat}&centerLon=${location.lon}&radius=50`,
-        { timeout: 10000 }
-      );
-      
-      if (hotspotsResponse.status === 200) {
-        logSuccess(`Got hotspots data for ${location.name}`);
-        logInfo(`Found ${hotspotsResponse.data.data.count} hotspots`);
-        if (hotspotsResponse.data.data.hotspots.length > 0) {
-          logInfo(`Sample hotspot: ${JSON.stringify(hotspotsResponse.data.data.hotspots[0], null, 2)}`);
-        }
-      }
-    } catch (error) {
-      logError(`Failed to get hotspots for ${location.name}: ${error.message}`);
-    }
-  }
-
   return true;
 }
 
@@ -315,33 +276,26 @@ function testEnvironmentConfig() {
 // Test mock data generation
 async function testMockDataGeneration() {
   logSection('TESTING MOCK DATA GENERATION');
-
-  const FireRiskAPI = require('./src/controllers/fireRiskController');
   
   try {
-    logTest('Mock Fire Risk Data Generation');
+    logTest('Mock Weather Data Generation');
     
-    // Test data generation for different locations
+    // Test weather data generation for different locations
     for (const location of testLocations.slice(0, 3)) {
-      logTest(`Mock data for ${location.name}`);
+      logTest(`Mock weather data for ${location.name}`);
       
-      // This would be done by the API, but we're testing the logic
-      const mockRisk = {
-        riskScore: Math.random(),
-        riskLevel: ['LOW', 'MODERATE', 'HIGH', 'EXTREME'][Math.floor(Math.random() * 4)],
+      const mockWeather = {
+        temperature: 20 + Math.random() * 20,
+        humidity: 30 + Math.random() * 40,
+        windSpeed: Math.random() * 25,
+        precipitation: Math.random() * 10,
         location: location,
-        features: {
-          temperature: 20 + Math.random() * 20,
-          humidity: 30 + Math.random() * 40,
-          windSpeed: Math.random() * 25,
-          precipitation: Math.random() * 10
-        },
         timestamp: new Date().toISOString()
       };
       
-      logSuccess(`Generated mock risk data for ${location.name}`);
-      logInfo(`Risk: ${mockRisk.riskLevel} (${(mockRisk.riskScore * 100).toFixed(1)}%)`);
-      logInfo(`Temperature: ${mockRisk.features.temperature.toFixed(1)}°C`);
+      logSuccess(`Generated mock weather data for ${location.name}`);
+      logInfo(`Temperature: ${mockWeather.temperature.toFixed(1)}°C`);
+      logInfo(`Humidity: ${mockWeather.humidity.toFixed(1)}%`);
     }
     
   } catch (error) {

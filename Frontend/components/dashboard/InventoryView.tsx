@@ -123,17 +123,24 @@ export function InventoryView({ isDark }: InventoryViewProps) {
       if (searchTerm) params.search = searchTerm;
       if (selectedCategory !== 'all') params.category = selectedCategory;
 
+      console.log('🔍 Fetching inventory data with params:', params);
+      console.log('🌐 API Base URL:', process.env.NEXT_PUBLIC_API_URL);
+      
       const response = await inventoryAPI.getAll(params);
+      
+      console.log('📦 Inventory API Response:', response);
       
       if (response.success) {
         setInventoryItems(response.data || []);
         setPaginationInfo(response.pagination);
         setError(null);
+        console.log('✅ Inventory data loaded:', response.data?.length, 'items');
       } else {
         setError(response.message || 'Failed to fetch inventory data');
+        console.error('❌ API Error:', response.message);
       }
     } catch (err) {
-      console.error('Error fetching inventory:', err);
+      console.error('💥 Error fetching inventory:', err);
       setError('Failed to connect to server');
     } finally {
       setLoading(false);

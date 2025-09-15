@@ -8,7 +8,6 @@ import {
   IconPackage,
   IconCloudStorm,
   IconChartBar,
-  IconFlame,
 } from "@tabler/icons-react";
 import { Sun, Moon, Menu, X } from "lucide-react";
 import { useSocket } from "../../lib/socket";
@@ -27,12 +26,6 @@ const sidebarLinks = [
     href: "/dashboard/inventory",
     icon: IconPackage,
     id: "inventory"
-  },
-  {
-    label: "Fire Risk",
-    href: "/dashboard/fire-risk",
-    icon: IconFlame,
-    id: "fire-risk"
   },
   {
     label: "Weather",
