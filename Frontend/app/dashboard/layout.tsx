@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import Link from "next/link";
 import { Sidebar as AnimatedSidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
   IconDashboard,
@@ -44,7 +45,10 @@ const sidebarLinks = [
 // Logo components for the sidebar
 const DisasterIQLogo = () => {
   return (
-    <div className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black">
+    <Link 
+      href="/"
+      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black hover:opacity-80 transition-opacity cursor-pointer"
+    >
       <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-red-500 dark:bg-red-400" />
       <motion.span
         initial={{ opacity: 0 }}
@@ -53,15 +57,18 @@ const DisasterIQLogo = () => {
       >
         DisasterIQ
       </motion.span>
-    </div>
+    </Link>
   );
 };
 
 const DisasterIQLogoIcon = () => {
   return (
-    <div className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black">
+    <Link 
+      href="/"
+      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black hover:opacity-80 transition-opacity cursor-pointer"
+    >
       <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-red-500 dark:bg-red-400" />
-    </div>
+    </Link>
   );
 };
 
