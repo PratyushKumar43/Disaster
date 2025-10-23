@@ -1,0 +1,41 @@
+{
+  "name": "disasteriq-development",
+  "version": "1.0.0",
+  "description": "Development environment for DisasterIQ - Disaster Management System",
+  "main": "start-dev.js",
+  "scripts": {
+    "dev": "node start-dev.js",
+    "dev:windows": "powershell -ExecutionPolicy Bypass -File start-dev.ps1",
+    "dev:bash": "bash start-dev.sh",
+    "dev:batch": "start-dev.bat",
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd Frontend && npm install",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd Frontend && npm run build",
+    "start": "npm run start:backend & npm run start:frontend",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd Frontend && npm start",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd Frontend && npm run lint"
+  },
+  "keywords": [
+    "disaster-management",
+    "emergency-response",
+    "inventory-management",
+    "nextjs",
+    "nodejs",
+    "development"
+  ],
+  "author": "DisasterIQ Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

@@ -23,17 +23,35 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    console.error('API Error:', {
-      message: error.message,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data,
+    // Enhanced error logging with better error handling
+    const errorInfo = {
+      message: error?.message || 'Unknown error',
+      status: error?.response?.status || 'No status',
+      statusText: error?.response?.statusText || 'No status text',
+      data: error?.response?.data || 'No response data',
       config: {
-        url: error.config?.url,
-        method: error.config?.method,
-        baseURL: error.config?.baseURL
-      }
+        url: error?.config?.url || 'Unknown URL',
+        method: error?.config?.method || 'Unknown method',
+        baseURL: error?.config?.baseURL || 'Unknown base URL'
+      },
+      // Additional error details
+      isNetworkError: !error?.response,
+      isTimeout: error?.code === 'ECONNABORTED',
+      errorCode: error?.code,
+      fullError: error
+    };
+    
+    console.error('API Error Details:', errorInfo);
+    
+    // Log a simplified version for easier debugging
+    console.error('API Error Summary:', {
+      message: errorInfo.message,
+      status: errorInfo.status,
+      url: errorInfo.config.url,
+      isNetworkError: errorInfo.isNetworkError,
+      isTimeout: errorInfo.isTimeout
     });
+    
     return Promise.reject(error);
   }
 );

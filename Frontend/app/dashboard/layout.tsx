@@ -2,83 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Sidebar as AnimatedSidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
-import {
-  IconDashboard,
-  IconPackage,
-  IconCloudStorm,
-  IconChartBar,
-  IconFlame,
-} from "@tabler/icons-react";
-import { Sun, Moon, Menu, X } from "lucide-react";
+import { SimpleSidebar } from "@/components/dashboard/SimpleSidebar";
+import { Sun, Moon, PanelLeft } from "lucide-react";
 import { useSocket } from "../../lib/socket";
-import { useTheme } from "../../hooks/useTheme";
-
-// Define the sidebar links for DisasterIQ
-const sidebarLinks = [
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: IconDashboard,
-    id: "dashboard"
-  },
-  {
-    label: "Inventory",
-    href: "/dashboard/inventory",
-    icon: IconPackage,
-    id: "inventory"
-  },
-  {
-    label: "Fire Risk",
-    href: "/dashboard/fire-risk",
-    icon: IconFlame,
-    id: "fire-risk"
-  },
-  {
-    label: "Weather",
-    href: "/dashboard/weather",
-    icon: IconCloudStorm,
-    id: "weather"
-  },
-  {
-    label: "AI Analysis",
-    href: "/dashboard/ai-analysis",
-    icon: IconChartBar,
-    id: "ai-analysis"
-  },
-];
-
-// Logo components for the sidebar
-const DisasterIQLogo = () => {
-  return (
-    <div className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black">
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-red-500 dark:bg-red-400" />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium whitespace-pre text-black dark:text-white"
-      >
-        DisasterIQ
-      </motion.span>
-    </div>
-  );
-};
-
-const DisasterIQLogoIcon = () => {
-  return (
-    <div className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black">
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-red-500 dark:bg-red-400" />
-    </div>
-  );
-};
+import { useTheme } from "../../components/providers/ThemeProvider";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isDark, setIsDark, mounted } = useTheme();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
   const { connect, disconnect, isConnected } = useSocket();
 
   // Initialize socket connection at dashboard level
@@ -89,132 +23,33 @@ export default function DashboardLayout({
     };
   }, []);
 
-  // Prevent hydration mismatch by not rendering theme-dependent content until mounted
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
-      </div>
-    );
-  }
+  const isDark = theme === "dark";
+  const toggleTheme = () => {
+    setTheme(isDark ? "light" : "dark");
+  };
 
   return (
     <div className={`flex w-full h-screen overflow-hidden ${isDark ? 'bg-gray-900' : 'bg-gray-50'} transition-colors duration-200`}>
-      {/* Desktop Sidebar */}
-      <div className="hidden md:block">
-        <AnimatedSidebar open={sidebarOpen} setOpen={setSidebarOpen}>
-          <SidebarBody className="justify-between gap-10 h-full">
-            <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
-              {sidebarOpen ? <DisasterIQLogo /> : <DisasterIQLogoIcon />}
-              <div className="mt-8 flex flex-col gap-2">
-                {sidebarLinks.map((link, idx) => {
-                  const IconComponent = link.icon;
-                  return (
-                    <SidebarLink 
-                      key={idx} 
-                      link={{
-                        ...link,
-                        icon: (
-                          <IconComponent 
-                            className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" 
-                          />
-                        )
-                      }}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-            <div className="mt-auto">
-              <SidebarLink
-                link={{
-                  label: "Pratyush",
-                  href: "#",
-                  icon: (
-                    <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
-                      P
-                    </div>
-                  ),
-                }}
-              />
-            </div>
-          </SidebarBody>
-        </AnimatedSidebar>
-      </div>
-
-      {/* Mobile Sidebar Overlay */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <motion.div
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed inset-0 z-50 md:hidden"
-          >
-            {/* Backdrop */}
-            <div
-              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-              onClick={() => setSidebarOpen(false)}
-            />
-            
-            {/* Mobile Sidebar */}
-            <div className={`relative w-80 h-full ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-xl flex flex-col`}>
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                <DisasterIQLogo />
-                <button
-                  onClick={() => setSidebarOpen(false)}
-                  className={`p-2 rounded-lg ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-              
-              <div className="flex-1 p-4 overflow-y-auto">
-                <div className="flex flex-col gap-2">
-                  {sidebarLinks.map((link, idx) => {
-                    const IconComponent = link.icon;
-                    return (
-                      <a
-                        key={idx}
-                        href={link.href}
-                        onClick={() => setSidebarOpen(false)}
-                        className={`flex items-center gap-3 p-3 rounded-lg ${isDark ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-gray-100 text-gray-700'} transition-colors`}
-                      >
-                        <IconComponent className="h-5 w-5 shrink-0" />
-                        <span className="text-sm font-medium">{link.label}</span>
-                      </a>
-                    );
-                  })}
-                </div>
-              </div>
-              
-              <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3 p-3 rounded-lg">
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
-                    P
-                  </div>
-                  <span className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                    Pratyush
-                  </span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Sidebar */}
+      <SimpleSidebar />
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col overflow-hidden h-screen">
         {/* Header */}
         <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-4 py-3 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md bg-opacity-95 shrink-0`}>
           <div className="flex items-center gap-3">
-            {/* Mobile menu button */}
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className={`md:hidden p-2 rounded-lg ${isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} transition-colors`}
+              onClick={() => {
+                // This will be handled by the sidebar component itself
+                const sidebar = document.querySelector('[data-sidebar-toggle]') as HTMLButtonElement;
+                if (sidebar) {
+                  sidebar.click();
+                }
+              }}
+              className={`p-2 rounded-lg ${isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-600'} transition-all`}
+              title="Toggle Sidebar"
             >
-              <Menu className="h-5 w-5" />
+              <PanelLeft className="h-4 w-4" />
             </button>
             <h1 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'} truncate`}>
               Dashboard
@@ -223,7 +58,7 @@ export default function DashboardLayout({
           
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setIsDark(!isDark)}
+              onClick={toggleTheme}
               className={`p-2 rounded-lg ${isDark ? 'bg-gray-700 text-yellow-400' : 'bg-gray-100 text-gray-600'} hover:opacity-80 transition-all`}
             >
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -264,4 +99,3 @@ export default function DashboardLayout({
     </div>
   );
 }
-

@@ -1,8 +1,7 @@
 "use client";
 
 import { StatsCard } from "./StatsCard";
-import { FireRiskSummary } from "./FireRiskSummary";
-import { Package, AlertTriangle, Shield, Cloud, Plus, BarChart3, Flame } from "lucide-react";
+import { Package, AlertTriangle, Shield, Cloud, Plus, BarChart3 } from "lucide-react";
 
 interface DashboardOverviewProps {
   isDark: boolean;
@@ -62,19 +61,12 @@ export function DashboardOverview({ isDark }: DashboardOverviewProps) {
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>Create Alert</span>
             </button>
-            <button className="p-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center gap-3 text-sm w-full">
-              <Flame className="h-4 w-4 shrink-0" />
-              <span>Fire Risk Analysis</span>
-            </button>
             <button className="p-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center gap-3 text-sm w-full">
               <BarChart3 className="h-4 w-4 shrink-0" />
               <span>Generate Report</span>
             </button>
           </div>
         </div>
-
-        {/* Fire Risk Summary */}
-        <FireRiskSummary isDark={isDark} />
 
         {/* Recent Activity */}
         <div className={`p-4 md:p-6 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm h-fit`}>

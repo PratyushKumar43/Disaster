@@ -123,18 +123,168 @@ export function InventoryView({ isDark }: InventoryViewProps) {
       if (searchTerm) params.search = searchTerm;
       if (selectedCategory !== 'all') params.category = selectedCategory;
 
+      console.log('🔍 Fetching inventory data with params:', params);
+      console.log('🌐 API Base URL:', process.env.NEXT_PUBLIC_API_URL);
+      
+      // Check if API URL is available
+      if (!process.env.NEXT_PUBLIC_API_URL && process.env.NODE_ENV === 'development') {
+        console.warn('⚠️ No API URL configured, using mock data');
+        // Use mock data for development
+        const mockData = {
+          success: true,
+          data: [
+            {
+              _id: '1',
+              itemName: 'Emergency Water Bottles',
+              itemCode: 'WB001',
+              category: 'water_supplies' as const,
+              subcategory: 'Bottled Water',
+              description: 'Emergency drinking water bottles for disaster relief',
+              specifications: {
+                brand: 'AquaSafe',
+                size: '500ml',
+                expiryDate: '2025-12-31'
+              },
+              quantity: {
+                current: 150,
+                reserved: 0,
+                minimum: 50,
+                maximum: 500
+              },
+              unit: 'pieces' as const,
+              location: {
+                department: 'Emergency Response' as any,
+                warehouse: 'Warehouse A',
+                section: 'Water Storage'
+              },
+              status: 'available' as const,
+              images: [],
+              tags: ['emergency', 'water', 'disaster-relief'],
+              notes: 'High priority item for emergency response',
+              lastUpdated: '2024-01-15T10:30:00Z',
+              updatedBy: 'System' as any,
+              createdBy: 'System' as any,
+              lastStockUpdate: '2024-01-15T10:30:00Z',
+              isDeleted: false,
+              createdAt: '2024-01-01T00:00:00Z',
+              updatedAt: '2024-01-15T10:30:00Z',
+              // Virtual properties
+              availableQuantity: 150,
+              stockPercentage: 30,
+              stockStatus: 'adequate' as const,
+              locationPath: 'Emergency Response > Warehouse A > Water Storage',
+              daysUntilExpiry: 365,
+              isExpired: false,
+              isExpiringSoon: false,
+              isLowStock: false,
+              isOutOfStock: false,
+              isCritical: false
+            },
+            {
+              _id: '2',
+              itemName: 'First Aid Kits',
+              itemCode: 'FAK001',
+              category: 'medical' as const,
+              subcategory: 'Emergency Medical',
+              description: 'Complete first aid kits for emergency medical care',
+              specifications: {
+                brand: 'MediCare',
+                size: 'Large',
+                expiryDate: '2025-06-30'
+              },
+              quantity: {
+                current: 25,
+                reserved: 5,
+                minimum: 10,
+                maximum: 100
+              },
+              unit: 'sets' as const,
+              location: {
+                department: 'Medical' as any,
+                warehouse: 'Medical Storage',
+                section: 'Emergency Supplies'
+              },
+              status: 'available' as const,
+              images: [],
+              tags: ['medical', 'first-aid', 'emergency'],
+              notes: 'Essential medical supplies for disaster response',
+              lastUpdated: '2024-01-14T15:45:00Z',
+              updatedBy: 'System' as any,
+              createdBy: 'System' as any,
+              lastStockUpdate: '2024-01-14T15:45:00Z',
+              isDeleted: false,
+              createdAt: '2024-01-01T00:00:00Z',
+              updatedAt: '2024-01-14T15:45:00Z',
+              // Virtual properties
+              availableQuantity: 20,
+              stockPercentage: 20,
+              stockStatus: 'low_stock' as const,
+              locationPath: 'Medical > Medical Storage > Emergency Supplies',
+              daysUntilExpiry: 180,
+              isExpired: false,
+              isExpiringSoon: false,
+              isLowStock: true,
+              isOutOfStock: false,
+              isCritical: false
+            }
+          ],
+          pagination: {
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: 2,
+            itemsPerPage: 10
+          }
+        };
+        setInventoryItems(mockData.data);
+        setPaginationInfo(mockData.pagination);
+        setError(null);
+        console.log('✅ Mock inventory data loaded:', mockData.data.length, 'items');
+        return;
+      }
+      
       const response = await inventoryAPI.getAll(params);
+      
+      console.log('📦 Inventory API Response:', response);
       
       if (response.success) {
         setInventoryItems(response.data || []);
         setPaginationInfo(response.pagination);
         setError(null);
+        console.log('✅ Inventory data loaded:', response.data?.length, 'items');
       } else {
         setError(response.message || 'Failed to fetch inventory data');
+        console.error('❌ API Error:', response.message);
       }
-    } catch (err) {
-      console.error('Error fetching inventory:', err);
-      setError('Failed to connect to server');
+    } catch (err: any) {
+      console.error('💥 Error fetching inventory:', err);
+      
+      // Better error handling with specific error messages
+      let errorMessage = 'Failed to connect to server';
+      
+      if (err?.response) {
+        // Server responded with error status
+        errorMessage = `Server error: ${err.response.status} - ${err.response.statusText || 'Unknown error'}`;
+      } else if (err?.request) {
+        // Request was made but no response received
+        errorMessage = 'Network error: Unable to reach server';
+      } else if (err?.code === 'ECONNABORTED') {
+        // Timeout error
+        errorMessage = 'Request timeout: Server took too long to respond';
+      } else if (err?.message) {
+        // Other error with message
+        errorMessage = `Error: ${err.message}`;
+      }
+      
+      setError(errorMessage);
+      console.error('🔍 Error details:', {
+        message: err?.message,
+        status: err?.response?.status,
+        statusText: err?.response?.statusText,
+        data: err?.response?.data,
+        code: err?.code,
+        isNetworkError: !err?.response,
+        isTimeout: err?.code === 'ECONNABORTED'
+      });
     } finally {
       setLoading(false);
     }
