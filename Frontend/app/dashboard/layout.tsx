@@ -34,20 +34,20 @@ export default function DashboardLayout({
       <SimpleSidebar />
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden h-screen">
+      <div className="flex-1 flex flex-col overflow-hidden h-screen lg:ml-0">
         {/* Header */}
         <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-4 py-3 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md bg-opacity-95 shrink-0`}>
           <div className="flex items-center gap-3">
+            {/* Mobile menu button */}
             <button
               onClick={() => {
-                // This will be handled by the sidebar component itself
                 const sidebar = document.querySelector('[data-sidebar-toggle]') as HTMLButtonElement;
                 if (sidebar) {
                   sidebar.click();
                 }
               }}
-              className={`p-2 rounded-lg ${isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-600'} transition-all`}
-              title="Toggle Sidebar"
+              className={`lg:hidden p-2 rounded-lg ${isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-600'} transition-all`}
+              title="Toggle Menu"
             >
               <PanelLeft className="h-4 w-4" />
             </button>

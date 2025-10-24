@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   IconDashboard,
@@ -8,7 +8,7 @@ import {
   IconCloudStorm,
   IconChartBar,
 } from "@tabler/icons-react";
-import { User, ChevronLeft, ChevronRight } from "lucide-react";
+import { User, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 // Define the sidebar links for DisasterIQ
 const sidebarLinks = [
@@ -51,25 +51,73 @@ const DisasterIQLogo = () => {
 
 export function SimpleSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+      // On mobile, sidebar should be closed by default
+      if (window.innerWidth < 768) {
+        setIsOpen(false);
+      }
+    };
+
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
+    if (isMobile) {
+      setIsOpen(!isOpen);
+    } else {
+      setIsCollapsed(!isCollapsed);
+    }
+  };
+
+  // Close sidebar when clicking on a link on mobile
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setIsOpen(false);
+    }
   };
 
   return (
-    <div className={`flex h-full flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ${
-      isCollapsed ? 'w-16' : 'w-64'
-    }`}>
+    <>
+      {/* Mobile Overlay */}
+      {isMobile && isOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+      
+      {/* Sidebar */}
+      <div className={`
+        flex h-full flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300
+        ${isMobile 
+          ? `fixed left-0 top-0 z-50 h-full ${isOpen ? 'w-64' : 'w-0 overflow-hidden'}`
+          : `${isCollapsed ? 'w-16' : 'w-64'}`
+        }
+      `}>
       {/* Header */}
       <div className="flex flex-col gap-2 p-2">
         <div className="flex items-center justify-between">
-          {!isCollapsed && <DisasterIQLogo />}
+          {(!isCollapsed || isMobile) && <DisasterIQLogo />}
           <button
             onClick={toggleSidebar}
             data-sidebar-toggle
             className="p-1 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
           >
-            {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            {isMobile ? (
+              <X className="h-4 w-4" />
+            ) : isCollapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronLeft className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>
@@ -81,13 +129,14 @@ export function SimpleSidebar() {
             <Link
               key={link.title}
               href={link.url}
+              onClick={handleLinkClick}
               className={`flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all ${
-                isCollapsed ? 'justify-center' : ''
+                isCollapsed && !isMobile ? 'justify-center' : ''
               }`}
-              title={isCollapsed ? link.title : undefined}
+              title={isCollapsed && !isMobile ? link.title : undefined}
             >
               <link.icon className="h-5 w-5 shrink-0" />
-              {!isCollapsed && <span className="truncate">{link.title}</span>}
+              {(!isCollapsed || isMobile) && <span className="truncate">{link.title}</span>}
             </Link>
           ))}
         </div>
@@ -96,10 +145,10 @@ export function SimpleSidebar() {
       {/* Footer */}
       <div className="flex flex-col gap-2 p-2">
         <div className={`flex w-full items-center gap-2 overflow-hidden rounded-md p-2 ${
-          isCollapsed ? 'justify-center' : ''
+          isCollapsed && !isMobile ? 'justify-center' : ''
         }`}>
           <User className="h-5 w-5 rounded-md shrink-0" />
-          {!isCollapsed && (
+          {(!isCollapsed || isMobile) && (
             <div className="flex flex-col items-start min-w-0">
               <span className="text-sm font-medium truncate">Pratyush</span>
               <span className="text-xs text-muted-foreground truncate">admin@disasteriq.com</span>
@@ -108,5 +157,6 @@ export function SimpleSidebar() {
         </div>
       </div>
     </div>
+    </>
   );
 }
